@@ -37,6 +37,7 @@ export default function NumberField({
       {...other}
       render={(props, state) => (
         <FormControl
+          fullWidth
           size={size}
           ref={props.ref}
           disabled={state.disabled}

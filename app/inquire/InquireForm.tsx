@@ -9,6 +9,7 @@ import {
   Grid,
   TextField,
   FormLabel,
+  Typography,
 } from '@mui/material'
 import NumberField from '@/components/NumberField'
 
@@ -118,12 +119,32 @@ export default function InquireForm({
           />
         </Grid>
       </Grid>
+      <Grid container justifyContent="space-between" alignItems="flex-start" sx={{my: 2}}>
+        <Grid size={9}>
+          <Typography gutterBottom variant="h6">
+            Estimated Cost:
+          </Typography>
+        </Grid>
+        <Grid container size='grow' alignItems='center' justifyContent='flex-end' sx={{ mx: 1}}>
+          <Grid size={4}>
+            <Typography gutterBottom variant="h6" align='center'>
+              $
+            </Typography>
+          </Grid>
+          <Grid size='grow'>
+            <Typography gutterBottom variant="h6">
+              0.00
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
       <Grid container spacing={3} sx={{ mt: 2 }}>
         <Grid size={{ xs: 12, md: 12 }}>
           <TextField
             fullWidth
             label="Special Instructions"
             variant="outlined"
+            multiline
             value={specialInstructions}
             onChange={(e) => setSpecialInstructions(e.target.value)}
           />

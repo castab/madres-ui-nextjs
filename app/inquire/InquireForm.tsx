@@ -4,6 +4,7 @@ import { Option } from '@/lib/types'
 import OptionSelection from './OptionSelection'
 import { useState } from 'react'
 import {
+  Box,
   Container,
   FormControl,
   Grid,
@@ -119,25 +120,6 @@ export default function InquireForm({
           />
         </Grid>
       </Grid>
-      <Grid container justifyContent="space-between" alignItems="flex-start" sx={{my: 2}}>
-        <Grid size={9}>
-          <Typography gutterBottom variant="h6">
-            Estimated Cost:
-          </Typography>
-        </Grid>
-        <Grid container size='grow' alignItems='center' justifyContent='flex-end' sx={{ mx: 1}}>
-          <Grid size={4}>
-            <Typography gutterBottom variant="h6" align='center'>
-              $
-            </Typography>
-          </Grid>
-          <Grid size='grow'>
-            <Typography gutterBottom variant="h6">
-              0.00
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
       <Grid container spacing={3} sx={{ mt: 2 }}>
         <Grid size={{ xs: 12, md: 12 }}>
           <TextField
@@ -150,6 +132,23 @@ export default function InquireForm({
           />
         </Grid>
       </Grid>
+      <Box
+        display="flex"
+        alignItems="baseline"
+        justifyContent="space-between"
+        sx={{ mt: 3, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          Estimated Price
+        </Typography>
+
+        <Typography variant="body1" sx={{ fontWeight: 500 }}>
+          $0.00
+        </Typography>
+      </Box>
+      <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+        Final pricing may vary based on availability and details.
+      </Typography>
     </Container>
   )
 }

@@ -1,8 +1,8 @@
 'use client'
 
-import { Option } from '@/lib/types'
+import { Option, OptionType } from '@/lib/types'
 import OptionSelection from './OptionSelection'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   Box,
   Container,
@@ -15,11 +15,17 @@ import {
 import NumberField from '@/components/NumberField'
 
 interface InquireFormProps {
-  appetizers: Option[]
-  entrees: Option[]
-  beverages: Option[]
-  modifiers: Option[]
+  allOptions: Option[]
+  typeOptions: {
+    type: OptionType
+    options: Option[]
+  }[]
 }
+
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+})
 
 function toggle(setter: React.Dispatch<React.SetStateAction<string[]>>) {
   return (name: string, checked: boolean) => {
@@ -30,19 +36,21 @@ function toggle(setter: React.Dispatch<React.SetStateAction<string[]>>) {
 }
 
 export default function InquireForm({
-  appetizers,
-  entrees,
-  beverages,
-  modifiers,
+  allOptions,
+  typeOptions,
 }: InquireFormProps) {
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [guestCount, setGuestCount] = useState<number | null>(null)
-  const [selectedAppetizers, setSelectedAppetizers] = useState<string[]>([])
-  const [selectedEntrees, setSelectedEntrees] = useState<string[]>([])
-  const [selectedBeverages, setSelectedBeverages] = useState<string[]>([])
-  const [selectedModifiers, setSelectedModifiers] = useState<string[]>([])
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([])
   const [specialInstructions, setSpecialInstructions] = useState<string>('')
+
+  const estimatedPrice = useMemo(() => {
+    if (!guestCount || selectedOptions.length === 0) return null
+    return allOptions
+      .filter((option) => selectedOptions.includes(option.name))
+      .reduce((acc, option) => acc + option.cost * guestCount, 0)
+  }, [selectedOptions, guestCount, allOptions])
 
   return (
     <Container maxWidth="md">
@@ -84,41 +92,16 @@ export default function InquireForm({
         </Grid>
       </FormControl>
       <Grid container spacing={4} sx={{ mt: 2 }}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <OptionSelection
-            type="Appetizers"
-            options={appetizers}
-            selectedOptions={selectedAppetizers}
-            onChange={toggle(setSelectedAppetizers)}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6 }}>
-          <OptionSelection
-            type="Entrees"
-            options={entrees}
-            selectedOptions={selectedEntrees}
-            onChange={toggle(setSelectedEntrees)}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6 }}>
-          <OptionSelection
-            type="Beverages"
-            options={beverages}
-            selectedOptions={selectedBeverages}
-            onChange={toggle(setSelectedBeverages)}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6 }}>
-          <OptionSelection
-            type="Modifiers"
-            options={modifiers}
-            selectedOptions={selectedModifiers}
-            onChange={toggle(setSelectedModifiers)}
-          />
-        </Grid>
+        {typeOptions.map((typeOption) => (
+          <Grid size={{ xs: 12, md: 6 }} key={typeOption.type.name}>
+            <OptionSelection
+              type={typeOption.type}
+              options={typeOption.options}
+              selectedOptions={selectedOptions}
+              onChange={toggle(setSelectedOptions)}
+            />
+          </Grid>
+        ))}
       </Grid>
       <Grid container spacing={3} sx={{ mt: 2 }}>
         <Grid size={{ xs: 12, md: 12 }}>
@@ -142,12 +125,12 @@ export default function InquireForm({
           Estimated Price
         </Typography>
 
-        <Typography variant="body1" sx={{ fontWeight: 500 }}>
-          $0.00
+        <Typography variant="body1" color="text.secondary">
+          {estimatedPrice !== null ? formatter.format(estimatedPrice) : 'N/A'}
         </Typography>
       </Box>
       <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-        Final pricing may vary based on availability and details.
+        Final pricing may vary based on availability, options, and details.
       </Typography>
     </Container>
   )

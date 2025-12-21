@@ -1,19 +1,14 @@
-import { fetchOptions } from '@/lib/options'
+import { fetchOptions, fetchOptionTypes } from '@/lib/options'
 import InquireForm from './InquireForm'
 
 export default async function InquirePage() {
-  const [appetizers, entrees, beverages, modifiers] = await Promise.all([
-    fetchOptions('appetizer'),
-    fetchOptions('entree'),
-    fetchOptions('beverage'),
-    fetchOptions('modifier'),
-  ])
-  return (
-    <InquireForm
-      appetizers={appetizers}
-      entrees={entrees}
-      beverages={beverages}
-      modifiers={modifiers}
-    />
+  const types = await fetchOptionTypes()
+  const typeOptions = await Promise.all(
+    types.map(async (type) => {
+      const options = await fetchOptions(type.name.toLowerCase())
+      return { type: type, options: options }
+    }),
   )
+  const allOptions = typeOptions.map((typeOption) => typeOption.options)
+  return <InquireForm allOptions={allOptions} typeOptions={typeOptions} />
 }

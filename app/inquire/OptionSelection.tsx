@@ -1,4 +1,4 @@
-import { Option } from '@/lib/types'
+import { Option, OptionType } from '@/lib/types'
 import {
   Checkbox,
   FormControlLabel,
@@ -61,7 +61,7 @@ function OptionRow({
 }
 
 interface OptionSelectionProps {
-  type: string
+  type: OptionType
   options: Option[]
   selectedOptions: string[]
   onChange: (name: string, checked: boolean) => void
@@ -76,9 +76,8 @@ export default function OptionSelection({
   return (
     <>
       <FormLabel component="legend" sx={{ mb: 1 }}>
-        {type}
+        {type.plural}
       </FormLabel>
-
       {options.map((option) => (
         <OptionRow
           key={option.name}

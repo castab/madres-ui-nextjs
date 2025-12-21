@@ -9,6 +9,6 @@ export default async function InquirePage() {
       return { type: type, options: options }
     }),
   )
-  const allOptions = typeOptions.map((typeOption) => typeOption.options)
+  const allOptions = typeOptions.flatMap((typeOption) => typeOption.options)
   return <InquireForm allOptions={allOptions} typeOptions={typeOptions} />
 }

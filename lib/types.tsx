@@ -1,4 +1,5 @@
 export type Option = {
+  type: string
   name: string
   display: string
   description: string

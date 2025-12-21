@@ -2,7 +2,7 @@
 
 import { Option, OptionType } from '@/lib/types'
 import OptionSelection from './OptionSelection'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
   Box,
   Container,
@@ -13,6 +13,7 @@ import {
   Typography,
 } from '@mui/material'
 import NumberField from '@/components/NumberField'
+import { estimatePrice } from './action'
 
 interface InquireFormProps {
   allOptions: Option[]
@@ -27,10 +28,10 @@ const formatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 })
 
-function toggle(setter: React.Dispatch<React.SetStateAction<string[]>>) {
-  return (name: string, checked: boolean) => {
+function toggle(setter: React.Dispatch<React.SetStateAction<Option[]>>) {
+  return (option: Option, checked: boolean) => {
     setter((prev) =>
-      checked ? [...prev, name] : prev.filter((n) => n !== name),
+      checked ? [...prev, option] : prev.filter((o) => o.name !== option.name),
     )
   }
 }
@@ -42,15 +43,8 @@ export default function InquireForm({
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [guestCount, setGuestCount] = useState<number | null>(null)
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([])
+  const [selectedOptions, setSelectedOptions] = useState<Option[]>([])
   const [specialInstructions, setSpecialInstructions] = useState<string>('')
-
-  const estimatedPrice = useMemo(() => {
-    if (!guestCount || selectedOptions.length === 0) return null
-    return allOptions
-      .filter((option) => selectedOptions.includes(option.name))
-      .reduce((acc, option) => acc + option.cost * guestCount, 0)
-  }, [selectedOptions, guestCount, allOptions])
 
   return (
     <Container maxWidth="md">
@@ -126,7 +120,9 @@ export default function InquireForm({
         </Typography>
 
         <Typography variant="body1" color="text.secondary">
-          {estimatedPrice !== null ? formatter.format(estimatedPrice) : 'N/A'}
+          {guestCount && selectedOptions.length > 0
+            ? formatter.format(estimatePrice(guestCount, selectedOptions))
+            : 'N/A'}
         </Typography>
       </Box>
       <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>

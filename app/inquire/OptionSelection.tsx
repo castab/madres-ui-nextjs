@@ -63,8 +63,8 @@ function OptionRow({
 interface OptionSelectionProps {
   type: OptionType
   options: Option[]
-  selectedOptions: string[]
-  onChange: (name: string, checked: boolean) => void
+  selectedOptions: Option[]
+  onChange: (option: Option, checked: boolean) => void
 }
 
 export default function OptionSelection({
@@ -82,8 +82,8 @@ export default function OptionSelection({
         <OptionRow
           key={option.name}
           option={option}
-          checked={selectedOptions.includes(option.name)}
-          onToggle={(checked) => onChange(option.name, checked)}
+          checked={selectedOptions.map((o) => o.name).includes(option.name)}
+          onToggle={(checked) => onChange(option, checked)}
         />
       ))}
     </>

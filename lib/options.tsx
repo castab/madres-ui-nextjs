@@ -11,14 +11,11 @@ export async function fetchOptionTypes(): Promise<OptionType[]> {
 }
 
 export async function fetchOptions(type: string): Promise<Option[]> {
-  const json = await fetch(
-    `${process.env.BACKEND_URL}/options/${type.toLowerCase()}`,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: process.env.BACKEND_TOKEN as string,
-      },
+  const json = await fetch(`${process.env.BACKEND_URL}/options/${type}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: process.env.BACKEND_TOKEN as string,
     },
-  ).then((response) => response.json())
+  }).then((response) => response.json())
   return json as Option[]
 }

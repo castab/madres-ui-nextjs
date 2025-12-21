@@ -19,19 +19,17 @@ function perGuestDiscount(
   if (guestCount <= minGuests) return 0
   if (guestCount >= maxGuests) return maxDiscount
 
-  const t =
-    (guestCount - minGuests) / (maxGuests - minGuests)
+  const t = (guestCount - minGuests) / (maxGuests - minGuests)
 
   // quadratic ease-in
   return maxDiscount * t * t
 }
 
-
 export function estimatePrice(
   guestCount: number,
   selectedOptions: Option[],
 ): number {
-  let perGuest = castToNumberOrNull(process.env.PER_GUEST_PRICE || '') || 22.00
+  let perGuest = castToNumberOrNull(process.env.PER_GUEST_PRICE || '') || 22.0
 
   // First two entrees are included in minimum charge
   const selectedEntrees = selectedOptions

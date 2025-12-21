@@ -16,7 +16,6 @@ import NumberField from '@/components/NumberField'
 import { estimatePrice } from './action'
 
 interface InquireFormProps {
-  allOptions: Option[]
   typeOptions: {
     type: OptionType
     options: Option[]
@@ -36,10 +35,7 @@ function toggle(setter: React.Dispatch<React.SetStateAction<Option[]>>) {
   }
 }
 
-export default function InquireForm({
-  allOptions,
-  typeOptions,
-}: InquireFormProps) {
+export default function InquireForm({ typeOptions }: InquireFormProps) {
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [guestCount, setGuestCount] = useState<number | null>(null)

@@ -42,8 +42,13 @@ export default function InquireForm({ typeOptions }: InquireFormProps) {
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([])
   const [specialInstructions, setSpecialInstructions] = useState<string>('')
 
+  const estimatedPrice =
+    guestCount != null
+      ? formatter.format(estimatePrice(guestCount, selectedOptions))
+      : null
+
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="md" sx={{ pb: { xs: 10, md: 0 } }}>
       <FormControl variant="standard" fullWidth>
         <FormLabel component="legend">Contact Details</FormLabel>
         <Grid container spacing={3}>
@@ -106,24 +111,36 @@ export default function InquireForm({ typeOptions }: InquireFormProps) {
         </Grid>
       </Grid>
       <Box
-        display="flex"
-        alignItems="baseline"
-        justifyContent="space-between"
-        sx={{ mt: 3, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}
+        position="sticky"
+        bottom={0}
+        zIndex={1}
+        bgcolor="background.paper"
+        px={2}
+        py={1.5}
+        sx={{
+          mt: 3,
+          borderTop: '1px solid',
+          borderColor: 'divider',
+        }}
       >
-        <Typography variant="body2" color="text.secondary">
-          Estimated Price
-        </Typography>
+        <Box
+          display="flex"
+          alignItems="baseline"
+          justifyContent="space-between"
+        >
+          <Typography variant="body2" color="text.secondary">
+            Estimated Price
+          </Typography>
 
-        <Typography variant="body1" color="text.secondary">
-          {guestCount && selectedOptions.length > 0
-            ? formatter.format(estimatePrice(guestCount, selectedOptions))
-            : 'N/A'}
+          <Typography variant="body1" color="text.secondary">
+            {estimatedPrice ?? 'N/A'}
+          </Typography>
+        </Box>
+
+        <Typography variant="caption" color="text.secondary">
+          Final pricing may vary based on availability, options, and details.
         </Typography>
       </Box>
-      <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-        Final pricing may vary based on availability, options, and details.
-      </Typography>
     </Container>
   )
 }

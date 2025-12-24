@@ -3,7 +3,9 @@ export type Option = {
   name: string
   display: string
   description: string
-  cost: number
+  price: number
+  pricing_basis: string
+  active: boolean
 }
 
 export type OptionType = {

@@ -1,4 +1,4 @@
-import { fetchOptions, fetchOptionTypes } from '@/lib/options'
+import { fetchBaseRate, fetchOptions, fetchOptionTypes } from '@/lib/options'
 import InquireForm from './InquireForm'
 
 export default async function InquirePage() {
@@ -9,5 +9,6 @@ export default async function InquirePage() {
       return { type: type, options: options }
     }),
   )
-  return <InquireForm typeOptions={typeOptions} />
+  const baseRate = await fetchBaseRate()
+  return <InquireForm typeOptions={typeOptions} baseRate={baseRate} />
 }

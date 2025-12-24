@@ -20,6 +20,7 @@ interface InquireFormProps {
     type: OptionType
     options: Option[]
   }[]
+  baseRate: number
 }
 
 const formatter = new Intl.NumberFormat('en-US', {
@@ -35,7 +36,10 @@ function toggle(setter: React.Dispatch<React.SetStateAction<Option[]>>) {
   }
 }
 
-export default function InquireForm({ typeOptions }: InquireFormProps) {
+export default function InquireForm({
+  typeOptions,
+  baseRate,
+}: InquireFormProps) {
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
   const [guestCount, setGuestCount] = useState<number | null>(null)
@@ -44,7 +48,7 @@ export default function InquireForm({ typeOptions }: InquireFormProps) {
 
   const estimatedPrice =
     guestCount != null
-      ? formatter.format(estimatePrice(guestCount, selectedOptions))
+      ? formatter.format(estimatePrice(baseRate, guestCount, selectedOptions))
       : null
 
   return (

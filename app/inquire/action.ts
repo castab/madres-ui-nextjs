@@ -26,42 +26,39 @@ function perGuestDiscount(
 }
 
 export function estimatePrice(
+  baseRate: number,
   guestCount: number,
   selectedOptions: Option[],
 ): number {
-  let perGuest = castToNumberOrNull(process.env.PER_GUEST_PRICE || '') || 22.0
+  let perGuest = baseRate
 
   // First two entrees are included in minimum charge
   const selectedEntrees = selectedOptions
     .filter((option) => option.type === 'ENTREE')
-    .sort((a, b) => a.cost - b.cost)
+    .sort((a, b) => a.price - b.price)
 
   if (selectedEntrees.length > 2) {
-    perGuest += selectedEntrees[2].cost
+    perGuest += selectedEntrees[2].price
   }
 
-  // For anything not an entree and not the travel modifier
-  // add the cost to the per guest price
-  const additionalCosts = selectedOptions
+  const additionalPerGuestCosts = selectedOptions
     .filter(
       (option) =>
-        option.type !== 'ENTREE' && option.name !== 'OUTSIDE_SERVICE_AREA',
+        option.type !== 'ENTREE' && option.pricing_basis !== 'PER_GUEST',
     )
-    .reduce((acc, option) => acc + option.cost, 0)
+    .reduce((acc, option) => acc + option.price, 0)
 
-  perGuest += additionalCosts
-
-  // If the travel modifier is selected, add the cost to the total
-  const travelModifier = selectedOptions.find(
-    (option) => option.name === 'OUTSIDE_SERVICE_AREA',
-  )
-  const travelCost = travelModifier ? travelModifier.cost : 0
+  const additionalPerEventCosts = selectedOptions
+    .filter(
+      (option) =>
+        option.type !== 'ENTREE' && option.pricing_basis === 'PER_EVENT',
+    )
+    .reduce((acc, option) => acc + option.price, 0)
 
   // Apply per guest discount
   const discount = perGuestDiscount(guestCount)
   perGuest -= discount
-
-  const totalCost = perGuest * guestCount + travelCost
-
+  const totalCost =
+    (perGuest + additionalPerGuestCosts) * guestCount + additionalPerEventCosts
   return totalCost
 }

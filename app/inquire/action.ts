@@ -1,4 +1,19 @@
-import { Option } from '@/lib/types'
+import { Option, PricingBasis } from '@/lib/types'
+
+export interface PriceLineItem {
+  type: string | null
+  label: string
+  amount: number
+  basis: PricingBasis
+}
+
+export interface PriceEstimate {
+  total: number
+  perGuestSubtotal: number
+  perEventSubtotal: number
+  guestCount: number
+  lineItems: PriceLineItem[]
+}
 
 function castToNumberOrNull(value: string): number | null {
   const numberValue = Number(value)
@@ -29,36 +44,105 @@ export function estimatePrice(
   baseRate: number,
   guestCount: number,
   selectedOptions: Option[],
-): number {
+): PriceEstimate {
+  const lineItems: PriceLineItem[] = []
+
   let perGuest = baseRate
 
-  // First two entrees are included in minimum charge
-  const selectedEntrees = selectedOptions
-    .filter((option) => option.type === 'ENTREE')
-    .sort((a, b) => a.price - b.price)
+  // 1️⃣ Base rate line item
+  lineItems.push({
+    type: 'BASE',
+    label: 'Base catering rate',
+    amount: baseRate,
+    basis: 'PER_GUEST',
+  })
 
-  if (selectedEntrees.length > 2) {
-    perGuest += selectedEntrees[2].price
+  // 2️⃣ ENTREE HANDLING (⬅️ DROP NEW CODE HERE)
+  const INCLUDED_ENTREE_COUNT = 2
+
+  const selectedEntrees = selectedOptions
+    .filter((o) => o.type === 'ENTREE')
+    .sort((a, b) => b.price - a.price)
+
+  const includedEntrees = selectedEntrees.slice(0, INCLUDED_ENTREE_COUNT)
+  const chargedEntrees = selectedEntrees.slice(INCLUDED_ENTREE_COUNT)
+
+  // Included entrees (most expensive)
+  for (const entree of includedEntrees) {
+    lineItems.push({
+      type: entree.type,
+      label: `${entree.display} (included)`,
+      amount: 0,
+      basis: 'PER_GUEST',
+    })
   }
 
-  const additionalPerGuestCosts = selectedOptions
-    .filter(
-      (option) =>
-        option.type !== 'ENTREE' && option.pricing_basis === 'PER_GUEST',
-    )
-    .reduce((acc, option) => acc + option.price, 0)
+  // Charged entrees
+  for (const entree of chargedEntrees) {
+    perGuest += entree.price
 
-  const additionalPerEventCosts = selectedOptions
-    .filter(
-      (option) =>
-        option.type !== 'ENTREE' && option.pricing_basis === 'PER_EVENT',
-    )
-    .reduce((acc, option) => acc + option.price, 0)
+    lineItems.push({
+      type: entree.type,
+      label: entree.display,
+      amount: entree.price,
+      basis: 'PER_GUEST',
+    })
+  }
 
-  // Apply per guest discount
+  // 3️⃣ PER-GUEST add-ons (non-entree)
+  const perGuestOptions = selectedOptions.filter(
+    (o) => o.type !== 'ENTREE' && o.pricing_basis === 'PER_GUEST',
+  )
+
+  for (const option of perGuestOptions) {
+    perGuest += option.price
+
+    lineItems.push({
+      type: option.type,
+      label: option.display,
+      amount: option.price,
+      basis: 'PER_GUEST',
+    })
+  }
+
+  // 4️⃣ PER-EVENT add-ons
+  const perEventOptions = selectedOptions.filter(
+    (o) => o.type !== 'ENTREE' && o.pricing_basis === 'PER_EVENT',
+  )
+
+  const perEventSubtotal = perEventOptions.reduce((sum, o) => sum + o.price, 0)
+
+  for (const option of perEventOptions) {
+    lineItems.push({
+      type: option.type,
+      label: option.display,
+      amount: option.price,
+      basis: 'PER_EVENT',
+    })
+  }
+
+  // 5️⃣ Discount
   const discount = perGuestDiscount(guestCount)
-  perGuest -= discount
-  const totalCost =
-    (perGuest + additionalPerGuestCosts) * guestCount + additionalPerEventCosts
-  return totalCost
+  if (discount > 0) {
+    perGuest -= discount
+
+    lineItems.push({
+      type: 'DISCOUNT',
+      label: 'Guest count discount',
+      amount: -discount,
+      basis: 'PER_GUEST',
+    })
+  }
+
+  // 6️⃣ Totals
+  const perGuestSubtotal = perGuest * guestCount
+  const total = perGuestSubtotal + perEventSubtotal
+
+  return {
+    total,
+    perGuestSubtotal,
+    perEventSubtotal,
+    guestCount,
+    lineItems,
+  }
 }

@@ -46,10 +46,11 @@ export default function InquireForm({
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([])
   const [specialInstructions, setSpecialInstructions] = useState<string>('')
 
-  const estimatedPrice =
-    guestCount != null
-      ? formatter.format(estimatePrice(baseRate, guestCount, selectedOptions))
-      : null
+  const estimatedPrice = () => {
+    if (guestCount == null) return null
+    const priceBreakdown = estimatePrice(baseRate, guestCount, selectedOptions)
+    return formatter.format(priceBreakdown.total)
+  }
 
   return (
     <Container maxWidth="md" sx={{ pb: { xs: 10, md: 0 } }}>
@@ -137,7 +138,7 @@ export default function InquireForm({
           </Typography>
 
           <Typography variant="body1" color="text.secondary">
-            {estimatedPrice ?? 'N/A'}
+            {estimatedPrice() ?? 'N/A'}
           </Typography>
         </Box>
 

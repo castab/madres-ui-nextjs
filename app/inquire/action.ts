@@ -44,7 +44,7 @@ export function estimatePrice(
   const additionalPerGuestCosts = selectedOptions
     .filter(
       (option) =>
-        option.type !== 'ENTREE' && option.pricing_basis !== 'PER_GUEST',
+        option.type !== 'ENTREE' && option.pricing_basis === 'PER_GUEST',
     )
     .reduce((acc, option) => acc + option.price, 0)
 

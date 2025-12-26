@@ -11,7 +11,11 @@ import {
   TextField,
   FormLabel,
   Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import NumberField from '@/components/NumberField'
 import { estimatePrice } from './action'
 
@@ -46,11 +50,13 @@ export default function InquireForm({
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([])
   const [specialInstructions, setSpecialInstructions] = useState<string>('')
 
-  const estimatedPrice = () => {
-    if (guestCount == null) return null
-    const priceBreakdown = estimatePrice(baseRate, guestCount, selectedOptions)
-    return formatter.format(priceBreakdown.total)
-  }
+  const priceBreakdown =
+    guestCount == null
+      ? null
+      : estimatePrice(baseRate, guestCount, selectedOptions)
+  const formattedTotal = priceBreakdown
+    ? formatter.format(priceBreakdown.total)
+    : 'N/A'
 
   return (
     <Container maxWidth="md" sx={{ pb: { xs: 10, md: 0 } }}>
@@ -128,19 +134,51 @@ export default function InquireForm({
           borderColor: 'divider',
         }}
       >
-        <Box
-          display="flex"
-          alignItems="baseline"
-          justifyContent="space-between"
-        >
-          <Typography variant="body2" color="text.secondary">
-            Estimated Price
-          </Typography>
+        <Accordion elevation={0} disableGutters>
+          <AccordionSummary
+            disabled={priceBreakdown === null}
+            expandIcon={<ExpandMoreIcon />}
+          >
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              width="100%"
+            >
+              <Box display="flex" alignItems="center" gap={0.75}>
+                <Typography variant="body2" color="text.secondary">
+                  Estimated Price
+                </Typography>
+              </Box>
 
-          <Typography variant="body1" color="text.secondary">
-            {estimatedPrice() ?? 'N/A'}
-          </Typography>
-        </Box>
+              <Typography variant="body1" fontWeight={600}>
+                {formattedTotal}
+              </Typography>
+            </Box>
+          </AccordionSummary>
+
+          <AccordionDetails>
+            {priceBreakdown &&
+              priceBreakdown.lineItems.map((item, idx) => (
+                <Box
+                  key={idx}
+                  display="flex"
+                  justifyContent="space-between"
+                  mb={0.5}
+                >
+                  <Typography variant="body2" color="text.secondary">
+                    {item.label}
+                  </Typography>
+
+                  <Typography variant="body2">
+                    {formatter.format(item.amount)}
+                    {item.basis === 'PER_GUEST' && '/guest'}
+                    {item.basis === 'PER_EVENT' && '/event'}
+                  </Typography>
+                </Box>
+              ))}
+          </AccordionDetails>
+        </Accordion>
 
         <Typography variant="caption" color="text.secondary">
           Final pricing may vary based on availability, options, and details.

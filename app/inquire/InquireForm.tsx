@@ -61,13 +61,14 @@ export default function InquireForm({
     ? formatter.format(priceBreakdown.total)
     : 'N/A'
 
-  const isFormValid = name.trim() !== '' && email.trim() !== '' && guestCount !== null
+  const isFormValid =
+    name.trim() !== '' && email.trim() !== '' && guestCount !== null
 
   const handleSubmit = async () => {
     if (!isFormValid) return
 
     setIsSubmitting(true)
-    
+
     try {
       const submissionData: SubmissionData = {
         name,
@@ -79,7 +80,6 @@ export default function InquireForm({
 
       await handleSubmission(submissionData)
       console.debug('Form submitted successfully')
-      
     } catch (error) {
       console.error('Error submitting form:', error)
       // Handle error (show toast/alert)
@@ -90,7 +90,7 @@ export default function InquireForm({
 
   return (
     <Container maxWidth="md" sx={{ py: { xs: 2 } }}>
-      <Typography color="text.secondary" sx={{py: { xs: 1 }}}>
+      <Typography color="text.secondary" sx={{ py: { xs: 1 } }}>
         {/* eslint-disable-next-line react/no-unescaped-entities */}
         Give us a few details about your event and we'll handle the rest!
       </Typography>

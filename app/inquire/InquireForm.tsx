@@ -5,6 +5,7 @@ import OptionSelection from './OptionSelection'
 import { useState } from 'react'
 import {
   Box,
+  Button,
   Container,
   FormControl,
   Grid,
@@ -18,6 +19,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import NumberField from '@/components/NumberField'
 import { estimatePrice } from './action'
+import { submitInquiry } from './submitInquiry'
 
 interface InquireFormProps {
   typeOptions: {
@@ -50,6 +52,9 @@ export default function InquireForm({
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([])
   const [specialInstructions, setSpecialInstructions] = useState<string>('')
 
+  const isSubmitDisabled =
+    !name.trim() || !email.trim() || guestCount === null
+
   const priceBreakdown =
     guestCount == null
       ? null
@@ -59,7 +64,36 @@ export default function InquireForm({
     : 'N/A'
 
   return (
-    <Container maxWidth="md" sx={{ py: { xs: 2 } }}>
+    <Container
+      component="form"
+      action={submitInquiry}
+      maxWidth="md"
+      sx={{ py: { xs: 2 } }}
+    >
+      <TextField
+        name="website"
+        label="Website"
+        variant="outlined"
+        autoComplete="off"
+        tabIndex={-1}
+        aria-hidden="true"
+        sx={{
+          position: 'absolute',
+          left: '-10000px',
+          top: 'auto',
+          width: 1,
+          height: 1,
+          overflow: 'hidden',
+        }}
+      />
+      {selectedOptions.map((option) => (
+        <input
+          key={option.name}
+          type="hidden"
+          name="selectedOptions"
+          value={option.name}
+        />
+      ))}
       <FormControl variant="standard" fullWidth>
         <FormLabel component="legend">Contact Details</FormLabel>
         <Grid container spacing={3}>
@@ -67,6 +101,7 @@ export default function InquireForm({
             <TextField
               required
               fullWidth
+              name="name"
               label="Name"
               variant="outlined"
               value={name}
@@ -78,7 +113,9 @@ export default function InquireForm({
             <TextField
               required
               fullWidth
+              name="email"
               label="Email Address"
+              type="email"
               variant="outlined"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -88,6 +125,7 @@ export default function InquireForm({
           <Grid size={{ xs: 12, md: 12 }}>
             <NumberField
               required
+              name="guestCount"
               label="Guest Count"
               value={guestCount}
               min={20}
@@ -113,6 +151,7 @@ export default function InquireForm({
         <Grid size={{ xs: 12, md: 12 }}>
           <TextField
             fullWidth
+            name="specialInstructions"
             label="Special Instructions"
             variant="outlined"
             multiline
@@ -181,6 +220,17 @@ export default function InquireForm({
               ))}
           </AccordionDetails>
         </Accordion>
+
+        <Box mt={1.5} display="flex" justifyContent="flex-end">
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={isSubmitDisabled}
+          >
+            Submit Inquiry
+          </Button>
+        </Box>
 
         <Typography variant="caption" color="text.secondary">
           Final pricing may vary based on availability, options, and details.

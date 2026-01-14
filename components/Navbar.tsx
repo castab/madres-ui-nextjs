@@ -6,10 +6,11 @@ import { styled, useTheme } from '@mui/material/styles'
 import MenuIcon from '@mui/icons-material/Menu'
 
 const FloatingNav = styled(AppBar)(({ theme }) => ({
-  background: 'rgba(255, 248, 245, 0.95)',
+  background: theme.palette.background.default,
   backdropFilter: 'blur(10px)',
-  boxShadow: '0 8px 32px rgba(122, 98, 65, 0.1)',
+  boxShadow: `0 8px 32px ${theme.palette.primary.light}1A`,
   borderBottom: `3px solid ${theme.palette.secondary.main}`,
+  color: theme.palette.text.primary,
 }))
 
 const Header = () => {

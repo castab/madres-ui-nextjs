@@ -132,6 +132,8 @@ export default function InquireForm({
           mt: 3,
           borderTop: '1px solid',
           borderColor: 'divider',
+          borderRadius: 2,
+          overflow: 'hidden',
         }}
       >
         <Accordion elevation={0} disableGutters>

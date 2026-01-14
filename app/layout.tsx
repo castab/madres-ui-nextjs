@@ -36,7 +36,15 @@ export default function RootLayout({
           <ThemeRegistry>
             <Navbar />
             <Toolbar />
-            <Box component="main" sx={{ backgroundColor: 'background.default', minHeight: '100vh' }}>
+            <Box
+              component="main"
+              sx={{
+                backgroundColor: 'background.default',
+                minHeight: '100vh',
+                px: { xs: 2, md: 4 },
+                py: { xs: 3, md: 4 },
+              }}
+            >
               {children}
             </Box>
             <Footer />

@@ -15,3 +15,11 @@ export type OptionType = {
   display: string
   plural: string
 }
+
+export type SubmissionData = {
+  name: string
+  email: string
+  guestCount: number
+  selectedOptions: Option[]
+  specialInstructions: string
+}

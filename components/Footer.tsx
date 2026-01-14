@@ -2,7 +2,9 @@ import React from 'react'
 import { Box, Container, Grid, Typography } from '@mui/material'
 
 const Footer = () => (
-  <Box sx={{ py: 4, backgroundColor: 'primary.main', color: 'background.default' }}>
+  <Box
+    sx={{ py: 4, backgroundColor: 'primary.main', color: 'background.default' }}
+  >
     <Container>
       <Grid
         container
@@ -13,17 +15,18 @@ const Footer = () => (
           textAlign: { xs: 'center', md: 'left' },
         }}
       >
-        <Grid sx={{xs: 12}}>
+        <Grid sx={{ xs: 12 }}>
           <Typography variant="h6" gutterBottom>
-          Contact Us
+            Contact Us
           </Typography>
           <Typography variant="body2">
-          Text: (555) 123-TACO<br />
-          Email: inquire@madrestacoshop.com
+            Text: (555) 123-TACO
+            <br />
+            Email: inquire@madrestacoshop.com
           </Typography>
         </Grid>
 
-        <Grid sx={{xs: 12, md: 6}}>
+        <Grid sx={{ xs: 12, md: 6 }}>
           <Box
             sx={{
               display: 'flex',
@@ -42,7 +45,8 @@ const Footer = () => (
             />
           </Box>
           <Typography variant="body1">
-          Serving authentic Mexican flavors with love and tradition since day one.
+            Serving authentic Mexican flavors with love and tradition since day
+            one.
           </Typography>
         </Grid>
       </Grid>

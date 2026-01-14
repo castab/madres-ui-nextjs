@@ -1,6 +1,6 @@
 'use client'
 
-import { Option, OptionType } from '@/lib/types'
+import { Option, OptionType, SubmissionData } from '@/lib/types'
 import OptionSelection from './OptionSelection'
 import { useState } from 'react'
 import {
@@ -14,10 +14,12 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Button,
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import NumberField from '@/components/NumberField'
 import { estimatePrice } from './action'
+import handleSubmission from './handleSubmission'
 
 interface InquireFormProps {
   typeOptions: {
@@ -49,6 +51,7 @@ export default function InquireForm({
   const [guestCount, setGuestCount] = useState<number | null>(null)
   const [selectedOptions, setSelectedOptions] = useState<Option[]>([])
   const [specialInstructions, setSpecialInstructions] = useState<string>('')
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   const priceBreakdown =
     guestCount == null
@@ -58,8 +61,39 @@ export default function InquireForm({
     ? formatter.format(priceBreakdown.total)
     : 'N/A'
 
+  const isFormValid =
+    name.trim() !== '' && email.trim() !== '' && guestCount !== null
+
+  const handleSubmit = async () => {
+    if (!isFormValid) return
+
+    setIsSubmitting(true)
+
+    try {
+      const submissionData: SubmissionData = {
+        name,
+        email,
+        guestCount: guestCount!,
+        selectedOptions,
+        specialInstructions,
+      }
+
+      await handleSubmission(submissionData)
+      console.debug('Form submitted successfully')
+    } catch (error) {
+      console.error('Error submitting form:', error)
+      // Handle error (show toast/alert)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <Container maxWidth="md" sx={{ py: { xs: 2 } }}>
+      <Typography color="text.secondary" sx={{ py: { xs: 1 } }}>
+        {/* eslint-disable-next-line react/no-unescaped-entities */}
+        Give us a few details about your event and we'll handle the rest!
+      </Typography>
       <FormControl variant="standard" fullWidth>
         <FormLabel component="legend">Contact Details</FormLabel>
         <Grid container spacing={3}>
@@ -181,6 +215,17 @@ export default function InquireForm({
               ))}
           </AccordionDetails>
         </Accordion>
+
+        <Button
+          variant="contained"
+          fullWidth
+          size="large"
+          onClick={handleSubmit}
+          disabled={!isFormValid || isSubmitting}
+          sx={{ mt: 2, mb: 1 }}
+        >
+          {isSubmitting ? 'Submitting...' : 'Submit Inquiry'}
+        </Button>
 
         <Typography variant="caption" color="text.secondary">
           Final pricing may vary based on availability, options, and details.

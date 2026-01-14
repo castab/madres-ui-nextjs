@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { AppBar, Toolbar, Box, Button, Drawer, Typography, IconButton, List, ListItemButton, useMediaQuery } from '@mui/material'
 import { styled, useTheme } from '@mui/material/styles'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -20,11 +20,13 @@ const Header = () => {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   
-  useEffect(() => {
-    if (!isMobile) {
-      setDrawerOpen(false)
-    }
-  }, [isMobile])
+  const handleDrawerToggle = () => {
+    setDrawerOpen(!drawerOpen)
+  }
+  
+  const handleDrawerClose = () => {
+    setDrawerOpen(false)
+  }
 
   return <FloatingNav position="fixed" elevation={0}>
     <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -56,7 +58,7 @@ const Header = () => {
       <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
         <IconButton
           aria-label="open menu"
-          onClick={() => setDrawerOpen(true)}
+          onClick={handleDrawerToggle}
           sx={{ color: 'primary.main' }}
         >
           <MenuIcon />
@@ -64,14 +66,14 @@ const Header = () => {
       </Box>
       <Drawer
         anchor="right"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        open={isMobile && drawerOpen}
+        onClose={handleDrawerClose}
       >
         <Box
           sx={{ width: 260, p: 2 }}
           role="presentation"
-          onClick={() => setDrawerOpen(false)}
-          onKeyDown={() => setDrawerOpen(false)}
+          onClick={handleDrawerClose}
+          onKeyDown={handleDrawerClose}
         >
           <List>
             {navItems.map((text) => (

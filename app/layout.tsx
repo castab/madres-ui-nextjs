@@ -41,8 +41,6 @@ export default function RootLayout({
               sx={{
                 backgroundColor: 'background.default',
                 minHeight: '100vh',
-                px: { xs: 2, md: 4 },
-                py: { xs: 3, md: 4 },
               }}
             >
               {children}

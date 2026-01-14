@@ -59,7 +59,7 @@ export default function InquireForm({
     : 'N/A'
 
   return (
-    <Container maxWidth="md" sx={{ pb: { xs: 10, md: 0 } }}>
+    <Container maxWidth="md" sx={{ py: { xs: 2 } }}>
       <FormControl variant="standard" fullWidth>
         <FormLabel component="legend">Contact Details</FormLabel>
         <Grid container spacing={3}>
